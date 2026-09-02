@@ -1,0 +1,54 @@
+{
+  "id": "68353fd1-68c6-4949-8dbb-df337e37945b",
+  "name": "LAIM Extract Query — Date Window",
+  "description": "SQL чтения готового train или test периода из витрины ЦДИО",
+  "fullDescription": "Нода ставится сразу после LAIM Extract Train или LAIM Extract Test. Она принимает уже готовые параметры окна: точного агента, точный дистрибутив и рассчитанные границы в наносекундах. Никаких настроек внутри Query нет. Для train и test используются два отдельных экземпляра этой же ноды. Каждый экземпляр передаёт sql_dict в управляющий вход IN_0 своей Data Source. Трейс относится к окну по времени окончания: ts_ns <= max(end_time_ns) < te_ns. Все спаны выбранного трейса читаются целиком. Повторное выполнение читает актуальное состояние витрины, поэтому поздняя дозагрузка данных может изменить состав trace_id при неизменных границах периода.",
+  "shortNameToDisplay": "Query Window",
+  "shape": "data_source",
+  "ports": [
+    {
+      "in": true,
+      "name": "selection",
+      "label": "Параметры периода",
+      "description": "Параметры периода от ноды LAIM Extract Train или LAIM Extract Test",
+      "order": 1,
+      "type": "default",
+      "required": true
+    },
+    {
+      "in": false,
+      "name": "sql_dict",
+      "label": "SQL чтения периода",
+      "description": "Подключить к управляющему входу IN_0 ноды Data Source",
+      "order": 2,
+      "type": "default"
+    }
+  ],
+  "script": {
+    "type": "python",
+    "baseImageKey": "py312-simple",
+    "deployType": "docker",
+    "runConfiguration": {
+      "sourceFiles": [
+        "main.py",
+        "laim_extract_profiles/__init__.py",
+        "laim_extract_profiles/profile_contract.py",
+        "laim_extract_query_window/__init__.py",
+        "laim_extract_query_window/query.py"
+      ],
+      "functionName": "main",
+      "functionParameters": [],
+      "output": {
+        "type": "json",
+        "output": []
+      }
+    }
+  },
+  "ui": {
+    "settings": [],
+    "result": {
+      "title": "Результат",
+      "components": []
+    }
+  }
+}
